@@ -48,7 +48,6 @@ pytest-cache-files-*/
 /docs/special_imgs/
 /docs/superpowers/plans/2026-06-15-solo-platform-acceptance.md
 /scripts/audit_shuttleset.py
-/scripts/evaluate_acceptance.py
 /scripts/evaluate_shuttleset.py
 /scripts/train_shuttleset.py
 /scripts/verify_exports.py
