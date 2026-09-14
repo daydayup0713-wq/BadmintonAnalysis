@@ -1,0 +1,243 @@
+.page {
+  padding: 26px 24px 80px;
+}
+
+.summaryCard {
+  padding: 30px;
+  border-radius: 24px;
+  color: white;
+  background: #14201c;
+}
+
+.eyebrow {
+  color: #c9ff47;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.summaryTitle {
+  display: block;
+  margin-top: 16px;
+  font-size: 42px;
+  font-weight: 800;
+}
+
+.summaryCopy {
+  display: block;
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 21px;
+  line-height: 1.65;
+}
+
+.summaryStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin-top: 28px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.summaryStats view {
+  display: grid;
+  gap: 4px;
+  padding: 18px;
+  background: #1d2d27;
+}
+
+.summaryStats text:first-child {
+  color: #c9ff47;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.summaryStats text:last-child {
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 17px;
+}
+
+.rallyStrip {
+  width: calc(100% + 48px);
+  margin: 28px -24px 0;
+}
+
+.rallyStripInner {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  padding: 0 24px 10px;
+}
+
+.rallyTab {
+  display: grid;
+  gap: 6px;
+  min-width: 116px;
+  padding: 18px;
+  border: 1px solid #dce1da;
+  border-radius: 16px;
+  background: white;
+}
+
+.rallyTab text:first-child {
+  color: #174f3f;
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.rallyTab text:last-child {
+  color: #7a8580;
+  font-size: 18px;
+}
+
+.rallyTab.active {
+  border-color: #174f3f;
+  color: white;
+  background: #174f3f;
+}
+
+.rallyTab.active text {
+  color: white;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 34px 4px 16px;
+}
+
+.sectionTitle text:first-child {
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.sectionTitle text:last-child {
+  color: #7a8580;
+  font-size: 19px;
+}
+
+.shotFeed {
+  display: grid;
+  gap: 12px;
+}
+
+.rallyOutcome {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.rallyOutcome > view {
+  display: grid;
+  gap: 8px;
+  padding: 18px 20px;
+  border: 1px solid #dfe4dc;
+  border-radius: 16px;
+  background: white;
+}
+
+.rallyOutcome text:first-child {
+  color: #7a8580;
+  font-size: 17px;
+}
+
+.rallyOutcome text:last-child {
+  color: #174f3f;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.shotCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #dfe4dc;
+  border-radius: 18px;
+  background: white;
+}
+
+.playerTag {
+  padding: 9px 12px;
+  border-radius: 10px;
+  color: #174f3f;
+  background: #e5f0eb;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.playerTag.bottom {
+  color: #4e5fb6;
+  background: #e9edff;
+}
+
+.shotMain {
+  display: grid;
+  gap: 5px;
+}
+
+.shotType {
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.shotTime {
+  color: #7a8580;
+  font-size: 18px;
+}
+
+.confidence {
+  color: #277963;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.confidence.low {
+  color: #d36f31;
+}
+
+.qualitySection {
+  margin-top: 18px;
+}
+
+.issueCard {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  gap: 15px;
+  margin-bottom: 12px;
+  padding: 20px;
+  border: 1px solid #ead8ca;
+  border-radius: 17px;
+  background: #fff8f2;
+}
+
+.issueDot {
+  width: 10px;
+  height: 10px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: #ef8d49;
+}
+
+.issueCard > view:last-child {
+  display: grid;
+  gap: 8px;
+}
+
+.issueCode {
+  color: #8f4b22;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.issueMessage {
+  color: #6f7773;
+  font-size: 20px;
+  line-height: 1.55;
+}
