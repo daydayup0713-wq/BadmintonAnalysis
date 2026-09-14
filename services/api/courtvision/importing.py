@@ -5,6 +5,12 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from .biomechanics import build_swing_metrics
+from .contracts import DataOrigin, PlayerPoseFrame
+from .metrics import build_player_movement_metrics
+from .repository import Repository
+from .state_machine import AnalysisStage
+
 
 def _validate_keypoints(
     keypoints: list[list[float]] | None,
@@ -19,6 +25,24 @@ def _validate_keypoints(
         if not all(math.isfinite(coordinate) for coordinate in point):
             raise ValueError("each keypoint requires finite x and y coordinates")
     return keypoints
+
+
+def _validate_point_collection(
+    points: list[list[float]] | None,
+    *,
+    required: int,
+    label: str,
+) -> list[list[float]] | None:
+    if points is None:
+        return None
+    if len(points) != required:
+        raise ValueError(f"{label} requires exactly {required} points")
+    for point in points:
+        if len(point) != 2 or not all(
+            math.isfinite(coordinate) for coordinate in point
+        ):
+            raise ValueError(f"{label} points require finite x and y coordinates")
+    return points
 
 
 def _validate_nested_observations(
@@ -101,6 +125,30 @@ class ExternalAnalysisImport(BaseModel):
             raise ValueError("provider identity must not be blank")
         return normalized
 
+    @field_validator("court_points")
+    @classmethod
+    def validate_court_points(
+        cls,
+        value: list[list[float]] | None,
+    ) -> list[list[float]] | None:
+        return _validate_point_collection(
+            value,
+            required=6,
+            label="court calibration",
+        )
+
+    @field_validator("net_points")
+    @classmethod
+    def validate_net_points(
+        cls,
+        value: list[list[float]] | None,
+    ) -> list[list[float]] | None:
+        return _validate_point_collection(
+            value,
+            required=4,
+            label="net calibration",
+        )
+
     @model_validator(mode="after")
     def validate_observations(self) -> "ExternalAnalysisImport":
         total_frames = self.video.total_frames
@@ -113,3 +161,163 @@ class ExternalAnalysisImport(BaseModel):
                 total_frames=total_frames,
             )
         return self
+
+
+def _missing_evidence(payload: ExternalAnalysisImport) -> list[str]:
+    missing = []
+    if not payload.poses:
+        missing.append("pose")
+    if not payload.court_points or len(payload.court_points) < 6:
+        missing.append("court_calibration")
+    if not payload.shuttle:
+        missing.append("shuttle_trajectory")
+    if not payload.hits:
+        missing.append("hit_events")
+    if not payload.shots:
+        missing.append("shot_classification")
+    return missing
+
+
+def import_external_results(
+    repository: Repository,
+    job_id: str,
+    payload: ExternalAnalysisImport,
+) -> dict[str, Any]:
+    provenance = {
+        "provider": payload.provider,
+        "provider_version": payload.provider_version,
+    }
+    repository.get_job(job_id)
+    repository.save_result(
+        job_id=job_id,
+        kind="external_import",
+        payload=provenance,
+    )
+    repository.save_result(
+        job_id=job_id,
+        kind="validating",
+        payload=payload.video.model_dump(),
+    )
+    repository.save_result(
+        job_id=job_id,
+        kind="calibrating",
+        payload={
+            "court_points": payload.court_points,
+            "net_points": payload.net_points,
+            "origin": DataOrigin.EXTERNAL.value,
+            **provenance,
+        },
+    )
+    repository.save_result(
+        job_id=job_id,
+        kind="segmenting",
+        payload={
+            "rallies": payload.rallies,
+            "origin": DataOrigin.EXTERNAL.value,
+        },
+    )
+
+    pose_frames = [
+        PlayerPoseFrame(
+            frame=pose.frame,
+            timestamp_us=pose.timestamp_us,
+            top_keypoints=pose.top_keypoints,
+            bottom_keypoints=pose.bottom_keypoints,
+            confidence=pose.confidence,
+            model_version=(
+                f"{payload.provider}:{payload.provider_version}"
+            ),
+            origin=DataOrigin.EXTERNAL,
+        )
+        for pose in payload.poses
+    ]
+    normalized_poses = [
+        {
+            "frame": pose.frame,
+            "timestamp_us": pose.timestamp_us,
+            "top_keypoints": pose.top_keypoints,
+            "bottom_keypoints": pose.bottom_keypoints,
+            "confidence": pose.confidence,
+            "provider": payload.provider,
+            "provider_version": payload.provider_version,
+            "origin": DataOrigin.EXTERNAL.value,
+        }
+        for pose in pose_frames
+    ]
+    repository.save_result(
+        job_id=job_id,
+        kind="pose_tracking",
+        payload={"frames": normalized_poses, "identities": []},
+    )
+    repository.save_result(
+        job_id=job_id,
+        kind="shuttle_tracking",
+        payload={
+            "points": payload.shuttle,
+            "origin": DataOrigin.EXTERNAL.value,
+        },
+    )
+    repository.save_result(
+        job_id=job_id,
+        kind="event_detection",
+        payload={
+            "rallies": payload.rallies,
+            "hits": payload.hits,
+            "shots": payload.shots,
+            "origin": DataOrigin.EXTERNAL.value,
+        },
+    )
+
+    can_calculate = bool(pose_frames and payload.court_points)
+    metrics: dict[str, Any] = {
+        "available": can_calculate,
+        "missing_evidence": _missing_evidence(payload),
+    }
+    if can_calculate:
+        assert payload.court_points is not None
+        metrics.update(
+            {
+                "players": build_player_movement_metrics(
+                    pose_frames,
+                    payload.court_points,
+                    fps=payload.video.fps,
+                ),
+                "swings": build_swing_metrics(
+                    pose_frames,
+                    payload.hits,
+                    payload.court_points,
+                    fps=payload.video.fps,
+                    duration_seconds=payload.video.duration_seconds,
+                ),
+            }
+        )
+    repository.save_result(
+        job_id=job_id,
+        kind="metrics",
+        payload=metrics,
+    )
+
+    missing_evidence = _missing_evidence(payload)
+    review = {
+        "status": AnalysisStage.REVIEW_REQUIRED.value,
+        "missing_evidence": missing_evidence,
+        "issue_count": len(missing_evidence),
+    }
+    repository.save_result(
+        job_id=job_id,
+        kind="review_required",
+        payload=review,
+    )
+    checkpoint = {**provenance, "imported": True}
+    repository.update_job_stage(
+        job_id,
+        AnalysisStage.METRICS,
+        progress=0.9,
+        checkpoint=checkpoint,
+    )
+    return repository.update_job_stage(
+        job_id,
+        AnalysisStage.REVIEW_REQUIRED,
+        progress=0.95,
+        checkpoint=checkpoint,
+    )
