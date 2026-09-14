@@ -12,7 +12,6 @@ class CoordinateSpace(str, Enum):
 
 
 class DataOrigin(str, Enum):
-    MODEL = "model"
     EXTERNAL = "external"
     INTERPOLATED = "interpolated"
     HUMAN = "human"
@@ -63,13 +62,13 @@ class ShuttleTrackPoint:
     visible: bool
     confidence: float
     coordinate_space: CoordinateSpace
-    model_version: str
+    provider_version: str
     origin: DataOrigin
 
     def __post_init__(self) -> None:
         _validate_observation(self.frame, self.timestamp_us, self.confidence)
-        if not self.model_version.strip():
-            raise ValueError("model_version is required")
+        if not self.provider_version.strip():
+            raise ValueError("provider_version is required")
 
     def to_dict(self) -> dict[str, Any]:
         return _wire_value(asdict(self))
@@ -82,15 +81,15 @@ class PlayerPoseFrame:
     top_keypoints: list[list[float]] | None
     bottom_keypoints: list[list[float]] | None
     confidence: float
-    model_version: str
+    provider_version: str
     origin: DataOrigin
 
     def __post_init__(self) -> None:
         _validate_observation(self.frame, self.timestamp_us, self.confidence)
         _validate_keypoints(self.top_keypoints)
         _validate_keypoints(self.bottom_keypoints)
-        if not self.model_version.strip():
-            raise ValueError("model_version is required")
+        if not self.provider_version.strip():
+            raise ValueError("provider_version is required")
 
     def to_dict(self) -> dict[str, Any]:
         return _wire_value(asdict(self))
@@ -103,8 +102,8 @@ class CourtCalibration:
     court_points: list[list[float]]
     net_points: list[list[float]]
     confidence: float
-    model_version: str
-    origin: DataOrigin = DataOrigin.MODEL
+    provider_version: str
+    origin: DataOrigin = DataOrigin.EXTERNAL
 
     def __post_init__(self) -> None:
         _validate_observation(self.frame, self.timestamp_us, self.confidence)
@@ -124,8 +123,8 @@ class RallyBoundary:
     start_timestamp_us: int
     end_timestamp_us: int
     confidence: float
-    model_version: str
-    origin: DataOrigin = DataOrigin.MODEL
+    provider_version: str
+    origin: DataOrigin = DataOrigin.EXTERNAL
 
     def __post_init__(self) -> None:
         _validate_observation(
@@ -148,8 +147,8 @@ class HitEvent:
     timestamp_us: int
     player: PlayerSide
     confidence: float
-    model_version: str
-    origin: DataOrigin = DataOrigin.MODEL
+    provider_version: str
+    origin: DataOrigin = DataOrigin.EXTERNAL
 
     def __post_init__(self) -> None:
         _validate_observation(self.frame, self.timestamp_us, self.confidence)
@@ -165,7 +164,7 @@ class ShotClassification:
     player: PlayerSide
     label: str
     confidence: float
-    model_version: str
+    provider_version: str
     origin: DataOrigin
 
     def __post_init__(self) -> None:
@@ -176,8 +175,8 @@ class ShotClassification:
         )
         if not self.label.strip():
             raise ValueError("shot label is required")
-        if not self.model_version.strip():
-            raise ValueError("model_version is required")
+        if not self.provider_version.strip():
+            raise ValueError("provider_version is required")
 
     def to_dict(self) -> dict[str, Any]:
         return _wire_value(asdict(self))

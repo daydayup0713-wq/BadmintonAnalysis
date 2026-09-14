@@ -62,7 +62,7 @@ def create_app(
 ) -> FastAPI:
     root = (repo_root or Path(__file__).resolve().parents[3]).resolve()
     owned_repository = repository is None
-    repo = repository or Repository(root / "data" / "courtvision.sqlite3")
+    repo = repository or Repository(root / "data" / "badminton-analysis.sqlite3")
     repo.initialize()
 
     app = FastAPI(

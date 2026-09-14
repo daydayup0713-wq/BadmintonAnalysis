@@ -1,0 +1,15 @@
+{
+  "name": "badminton-analysis-workspace",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "apps/mini"
+  ],
+  "scripts": {
+    "web:dev": "npm run dev -w @badminton-analysis/web",
+    "web:build": "npm run build -w @badminton-analysis/web",
+    "web:start": "npm run start -w @badminton-analysis/web",
+    "mini:dev": "npm run dev:weapp -w @badminton-analysis/mini",
+    "mini:build": "npm run build:weapp -w @badminton-analysis/mini"
+  }
+}

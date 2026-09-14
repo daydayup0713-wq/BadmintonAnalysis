@@ -224,7 +224,7 @@ def import_external_results(
             top_keypoints=pose.top_keypoints,
             bottom_keypoints=pose.bottom_keypoints,
             confidence=pose.confidence,
-            model_version=(
+            provider_version=(
                 f"{payload.provider}:{payload.provider_version}"
             ),
             origin=DataOrigin.EXTERNAL,

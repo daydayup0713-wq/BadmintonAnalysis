@@ -1335,85 +1335,6 @@ select {
   color: var(--muted);
 }
 
-.runtimeStrip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  border-bottom: 1px solid var(--ink);
-}
-
-.runtimeStrip div {
-  min-height: 110px;
-  padding: 24px 0;
-  display: grid;
-  align-content: space-between;
-  border-right: 1px solid var(--line);
-}
-
-.runtimeStrip div:not(:first-child) {
-  padding-left: 24px;
-}
-
-.runtimeStrip span {
-  color: var(--muted);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.runtimeStrip strong {
-  font-size: 17px;
-}
-
-.modelList {
-  border-top: 1px solid var(--ink);
-}
-
-.modelList article {
-  padding: 22px 0;
-  display: grid;
-  grid-template-columns: 0.7fr 1.3fr;
-  gap: 28px;
-  border-bottom: 1px solid var(--line);
-}
-
-.modelList article > div {
-  display: grid;
-  gap: 4px;
-}
-
-.modelList article > div span {
-  color: var(--court-light);
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-}
-
-.modelList article > div strong {
-  font-size: 17px;
-}
-
-.modelList article > div small {
-  color: var(--muted);
-}
-
-.modelList dl {
-  margin: 0;
-  display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: 6px 12px;
-  font-size: 9px;
-}
-
-.modelList dt {
-  color: var(--muted);
-}
-
-.modelList dd {
-  margin: 0;
-  overflow-wrap: anywhere;
-  font-family: Consolas, monospace;
-}
-
 .acceptanceState {
   padding: 7px 10px;
   border-radius: 999px;
@@ -1578,8 +1499,7 @@ select {
 
   .swingHeatmaps,
   .athleteWorkspace,
-  .detailColumns,
-  .modelList article {
+  .detailColumns {
     grid-template-columns: 1fr;
   }
 
@@ -1607,9 +1527,5 @@ select {
     border-bottom: 1px solid var(--line);
     padding-right: 0;
     padding-bottom: 20px;
-  }
-
-  .runtimeStrip {
-    grid-template-columns: 1fr 1fr;
   }
 }

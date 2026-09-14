@@ -58,7 +58,7 @@ def export_csv_bundle(
             "player",
             "label",
             "confidence",
-            "model_version",
+            "provider_version",
             "origin",
         ]
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -96,7 +96,7 @@ def _report_lines(summary: dict[str, Any]) -> list[str]:
     if shots is None:
         shots = summary.get("hits", [])
     lines = [
-        "CourtVision Badminton Analysis Report",
+        "BadmintonAnalysis Report",
         "",
         (
             "This report was generated locally. Low-confidence results are "
@@ -231,10 +231,10 @@ def export_pdf_report(
     for style in styles.byName.values():
         style.fontName = "STSong-Light"
     story = [
-        Paragraph("CourtVision 羽毛球分析报告", styles["Title"]),
+        Paragraph("BadmintonAnalysis 羽毛球分析报告", styles["Title"]),
         Spacer(1, 12),
         Paragraph(
-            "本报告基于本地 SoloShuttlePose。低置信结果为候选结论，需人工复核。",
+            "本报告基于导入的外部分析结果。低置信结果为候选结论，需人工复核。",
             styles["BodyText"],
         ),
         Spacer(1, 14),
@@ -302,7 +302,7 @@ def export_pdf_report(
     document = SimpleDocTemplate(
         str(output),
         pagesize=A4,
-        title="CourtVision Badminton Analysis",
+        title="BadmintonAnalysis Report",
     )
     document.build(story)
     return output

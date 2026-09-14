@@ -3,7 +3,7 @@ export default defineAppConfig({
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#14201c",
-    navigationBarTitleText: "CourtVision",
+    navigationBarTitleText: "BadmintonAnalysis",
     navigationBarTextStyle: "white",
     backgroundColor: "#f4f5ef",
   },

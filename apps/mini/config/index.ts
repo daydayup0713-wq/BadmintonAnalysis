@@ -1,7 +1,7 @@
 import { defineConfig } from "@tarojs/cli";
 
 export default defineConfig({
-  projectName: "courtvision-mini",
+  projectName: "badminton-analysis-mini",
   date: "2026-06-14",
   designWidth: 750,
   deviceRatio: {

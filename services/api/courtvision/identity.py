@@ -125,7 +125,7 @@ def assign_stable_identities(
                 "top_athlete_id": top_id,
                 "bottom_athlete_id": bottom_id,
                 "confidence": confidence,
-                "model_version": "solo:pose-proportion-identity:v1",
+                "provider_version": "platform:pose-proportion-identity:v1",
                 "origin": frame.origin.value,
             }
         )

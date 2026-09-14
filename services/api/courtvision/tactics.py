@@ -200,7 +200,7 @@ def enrich_rally_tactics(
                 ),
                 "outcome_reason": outcome_reason,
                 "phase_transitions": phase_transitions,
-                "origin": boundary.get("origin", "model"),
+                "origin": boundary.get("origin", "external"),
             }
         )
     return {"shots": enriched_shots, "rallies": enriched_rallies}
